@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Orgs</string>
+    <string name="descricao">Descrição</string>
+    <string name="valor">Valor</string>
+    <string name="nome">Nome</string>
+    <string name="salvar">Salvar</string>
+    <string name="botao_flutuante_adicionar_produto">Botão flutuante adicionar produto</string>
+    <string name="url_da_imagem">URL da imagem</string>
+    <string name="carregar">Carregar</string>
+</resources>
