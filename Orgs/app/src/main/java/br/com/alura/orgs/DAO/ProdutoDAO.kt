@@ -17,10 +17,7 @@ class ProdutoDAO {
     //instâncias (ex: catálogo de produtos da loja).
     companion object {
         val produtos = mutableListOf<Produto>(
-            Produto(nome = "Salada",
-               descricao = "Morango, uva, laranja",
-                valor = BigDecimal("19.88")
-            )
-        ) //criando lista
+        //criando lista
+        )
     }
 }

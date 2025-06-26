@@ -6,26 +6,26 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import br.com.alura.orgs.DAO.ProdutoDAO
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
-import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 
 
 // heranca
 class ListaProdutosActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityListaProdutosBinding
-
     private val dao = ProdutoDAO()
-
     // Cria uma instância do DAO que fornece os dados dos produtos
+
     private val adapter = ListaProdutosAdapter(this, produtos = dao.buscaTodos())
     // Define o adaptador do RecyclerView, passando o contexto e a lista de produtos buscados do DAO
 
+    private val binding by lazy {
+        ActivityListaProdutosBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityListaProdutosBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        title = "Formulário"
+        title = "Lista de produtos"
         configuraRecyclerView()
         configuraFab()
     }
@@ -43,11 +43,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         }
     }
 
-//    private fun vaiParaDetalhesProduto() {
-//        val intent = Intent(this, DetalhesProdutoActivity::class:java)
-//        startActivity(intent)
-//    }
-
     private fun vaiParaFormularioProduto() {
         val intent = Intent(this, FormularioProdutoActivity::class.java)
         // Cria uma intent para abrir a tela do formulário de produto
@@ -58,6 +53,12 @@ class ListaProdutosActivity : AppCompatActivity() {
         val recycleView = binding.activityListaProdutosRecyclerView
         // Escreve no Log do Android todos os produtos retornados pelo DAO
         recycleView.adapter = adapter
+        adapter.quandoClicaNoItem = {
+            val intent = Intent(this, DetalhesProdutoActivity::class.java).apply {
+                // envio do produto por meio do extra
+                putExtra(CHAVE_PRODUTO, it)
+            }
+            startActivity(intent)
+                }
+            }
     }
-
-}

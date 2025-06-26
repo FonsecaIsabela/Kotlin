@@ -18,7 +18,7 @@ open class FormularioProdutoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFormularioProdutoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        title = "Cadastrar produto"
+        title = "Formulario"
         configuraBotaoSalvar()
         binding.activityFormularioProdutoImagem.setOnClickListener {
             FormularioImagemDialog(this)
@@ -28,7 +28,6 @@ open class FormularioProdutoActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.activityFormularioProdutoBotaoSalvar

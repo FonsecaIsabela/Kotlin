@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/frutas"
+            android:src="@drawable/produto"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,12 +62,12 @@
             android:layout_margin="16dp"
             android:background="@android:color/transparent"
             android:fontFamily="@font/montserrat"
-            android:gravity="top"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_detalhes_produto_nome"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="@tools:sample/lorem[10]" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
