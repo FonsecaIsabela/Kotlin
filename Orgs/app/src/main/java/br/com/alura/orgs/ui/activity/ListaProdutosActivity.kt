@@ -3,23 +3,29 @@ package br.com.alura.orgs.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import br.com.alura.orgs.DAO.ProdutoDAO
+import br.com.alura.orgs.R
+import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
+import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 
 
 // heranca
 class ListaProdutosActivity : AppCompatActivity() {
 
-    private val dao = ProdutoDAO()
-    // Cria uma instância do DAO que fornece os dados dos produtos
-
-    private val adapter = ListaProdutosAdapter(this, produtos = dao.buscaTodos())
-    // Define o adaptador do RecyclerView, passando o contexto e a lista de produtos buscados do DAO
+    private val adapter = ListaProdutosAdapter(context = this)
+    // Define o adaptador do RecyclerView, passando o contexto
 
     private val binding by lazy {
         ActivityListaProdutosBinding.inflate(layoutInflater)
+    }
+
+    private val produtoDao by lazy {
+        var db = AppDatabase.instancia(this)
+        db.produtoDao()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +38,37 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.atualiza(dao.buscaTodos())
+        adapter.atualiza(produtoDao.buscaTodos())
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_ordenar_produtos, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val produtosOrdenados: List<Produto>? = when (item.itemId) {
+            R.id.menu_ordenar_nome_asc ->
+                produtoDao.buscaTodosOrdenadorPorNomeAsc()
+            R.id.menu_ordenar_nome_desc ->
+                produtoDao.buscaTodosOrdenadorPorNomeDesc()
+            R.id.menu_ordenar_descricao_asc ->
+                produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
+            R.id.menu_ordenar_descricao_desc ->
+                produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
+            R.id.menu_ordenar_valor_asc ->
+                produtoDao.buscaTodosOrdenadosPorValorAsc()
+            R.id.menu_ordenar_valor_desc ->
+                produtoDao.buscaTodosOrdenadosPorValorDesc()
+            R.id.menu_sem_ordenar ->
+                produtoDao.buscaTodos()
+
+            else -> null
+        }
+        produtosOrdenados?.let {
+            adapter.atualiza(it)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun configuraFab() {
@@ -56,9 +92,15 @@ class ListaProdutosActivity : AppCompatActivity() {
         adapter.quandoClicaNoItem = {
             val intent = Intent(this, DetalhesProdutoActivity::class.java).apply {
                 // envio do produto por meio do extra
-                putExtra(CHAVE_PRODUTO, it)
+                putExtra(CHAVE_PRODUTO_ID, it.id)
             }
             startActivity(intent)
-                }
-            }
+        }
+        adapter.quandoClicaNoEditar = {
+            Log.i("ListaProdutosActivity", "Clicou no editar $it")
+        }
+        adapter.quandoClicaNoRemover = {
+            Log.i("ListaProdutosActivity", "Clicou no remover $it")
+        }
     }
+}

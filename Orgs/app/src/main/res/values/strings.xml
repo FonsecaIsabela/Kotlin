@@ -7,4 +7,14 @@
     <string name="botao_flutuante_adicionar_produto">Botão flutuante adicionar produto</string>
     <string name="url_da_imagem">URL da imagem</string>
     <string name="carregar">Carregar</string>
+    <string name="editar">Editar</string>
+    <string name="remover">Remover</string>
+    <string name="nome_desc">Nome desc</string>
+    <string name="nome_asc">Nome asc</string>
+    <string name="descricao_desc">Descrição desc</string>
+    <string name="descricao_asc">Descrição asc</string>
+    <string name="ordenar">Ordenar</string>
+    <string name="valor_desc">Valor desc</string>
+    <string name="valor_asc">Valor asc\n</string>
+    <string name="sem_ordenacao">Sem ordenação</string>
 </resources>

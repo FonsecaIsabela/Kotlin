@@ -3,9 +3,12 @@ package br.com.alura.orgs.ui.recyclerview.adapter
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import br.com.alura.orgs.R
 import br.com.alura.orgs.databinding.ProdutoItemBinding
 import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
 import br.com.alura.orgs.extensions.tentaCarregarImagem
@@ -16,8 +19,10 @@ import java.util.Locale
 
 class ListaProdutosAdapter(
     private val context: Context,
-    produtos: List<Produto>,
-    var quandoClicaNoItem: (produto: Produto) -> Unit = {}
+    produtos: List<Produto> = emptyList(),
+    var quandoClicaNoItem: (produto: Produto) -> Unit = {},
+    var quandoClicaNoEditar: (produto: Produto) -> Unit = {},
+    var quandoClicaNoRemover: (produto: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
 
     private val produtos = produtos.toMutableList()
@@ -25,7 +30,7 @@ class ListaProdutosAdapter(
     // utilização do inner na classe interna para acessar membros da classe
     // nesse caso, a utilização da variável quandoClicaNoItem
     inner class ViewHolder(private val binding: ProdutoItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), PopupMenu.OnMenuItemClickListener {
 
         // Considerando que o ViewHolder modifica de valor com base na posiçãoAdd commentMore actions
         // é necessário o uso de properties mutáveis, para evitar nullables
@@ -40,6 +45,15 @@ class ListaProdutosAdapter(
                 if(::produto.isInitialized) {
                     quandoClicaNoItem(produto)
                 }
+            }
+
+            itemView.setOnLongClickListener {
+                PopupMenu(context, itemView).apply {
+                    menuInflater.inflate(R.menu.menu_detalhes_produto, menu
+                    )
+                    setOnMenuItemClickListener(this@ViewHolder)
+                }.show()
+                true
             }
         }
 
@@ -69,6 +83,20 @@ class ListaProdutosAdapter(
             val formatador: NumberFormat = NumberFormat
                 .getNumberInstance(Locale("pt", "br"))
             return formatador.format(valor)
+        }
+
+        override fun onMenuItemClick(item: MenuItem?): Boolean {
+            item?.let {
+                when (it.itemId) {
+                    R.id.menu_detalhes_produto_editar -> {
+                        quandoClicaNoEditar(produto)
+                    }
+                    R.id.menu_detalhes_produto_remover -> {
+                        quandoClicaNoRemover(produto)
+                    }
+                }
+            }
+            return true
         }
     }
 
