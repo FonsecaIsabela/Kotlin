@@ -6,22 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.security.auth.login.LoginException
 
 
 // heranca
@@ -39,8 +35,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         db.produtoDao()
     }
 
-    private val job = Job()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -53,36 +47,18 @@ class ListaProdutosActivity : AppCompatActivity() {
         super.onResume()
         val db = AppDatabase.instancia(this)
         val produtoDao = db.produtoDao()
-        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
-            Log.e(TAG, "onResume: throwable $throwable")
-            Toast.makeText(
-                this@ListaProdutosActivity,
-                "Ocorreu um problema",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
         val scope = MainScope()
-        scope.launch(job) {
+        lifecycleScope.launch() {
             repeat(1000) {
                 Log.i(TAG, "onResume: coroutine está em execução $it")
                 delay(1000)
             }
         }
-        scope.launch(handler) {
-            MainScope().launch() {
-                throw Exception("lançando exception na coroutine em outro scope")
-            }
-            throw IllegalArgumentException("lançando exception na coroutine")
-            val produtos = withContext(Dispatchers.IO) {
-                produtoDao.buscaTodos()
-            }
+        lifecycleScope.launch() {
+            //apresentar um componente que indica o carregamento
+            val produtos = produtoDao.buscaTodos()
             adapter.atualiza(produtos)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -91,35 +67,38 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val produtosOrdenados: List<Produto>? = when (item.itemId) {
-            R.id.menu_ordenar_nome_asc ->
-                produtoDao.buscaTodosOrdenadorPorNomeAsc()
+        lifecycleScope.launch {
+            val produtosOrdenados: List<Produto>? = when (item.itemId) {
+                R.id.menu_ordenar_nome_asc ->
+                    produtoDao.buscaTodosOrdenadorPorNomeAsc()
 
-            R.id.menu_ordenar_nome_desc ->
-                produtoDao.buscaTodosOrdenadorPorNomeDesc()
+                R.id.menu_ordenar_nome_desc ->
+                    produtoDao.buscaTodosOrdenadorPorNomeDesc()
 
-            R.id.menu_ordenar_descricao_asc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
+                R.id.menu_ordenar_descricao_asc ->
+                    produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
 
-            R.id.menu_ordenar_descricao_desc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
+                R.id.menu_ordenar_descricao_desc ->
+                    produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
 
-            R.id.menu_ordenar_valor_asc ->
-                produtoDao.buscaTodosOrdenadosPorValorAsc()
+                R.id.menu_ordenar_valor_asc ->
+                    produtoDao.buscaTodosOrdenadosPorValorAsc()
 
-            R.id.menu_ordenar_valor_desc ->
-                produtoDao.buscaTodosOrdenadosPorValorDesc()
+                R.id.menu_ordenar_valor_desc ->
+                    produtoDao.buscaTodosOrdenadosPorValorDesc()
 
-            R.id.menu_sem_ordenar ->
-                produtoDao.buscaTodos()
+                R.id.menu_sem_ordenar ->
+                    produtoDao.buscaTodos()
 
-            else -> null
-        }
-        produtosOrdenados?.let {
-            adapter.atualiza(it)
+                else -> null
+            }
+            produtosOrdenados?.let {
+                adapter.atualiza(it)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     private fun configuraFab() {
         val fab = binding.activityListaProdutosFloatingActionButton

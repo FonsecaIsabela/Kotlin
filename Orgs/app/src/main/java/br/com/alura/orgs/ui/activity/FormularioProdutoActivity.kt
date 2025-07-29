@@ -2,6 +2,7 @@ package br.com.alura.orgs.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
@@ -23,7 +24,6 @@ open class FormularioProdutoActivity : AppCompatActivity() {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +51,7 @@ open class FormularioProdutoActivity : AppCompatActivity() {
     }
 
     private fun tentaBuscarProduto() {
-        scope.launch {
+        lifecycleScope.launch {
             produtoDao.buscaPorId(produtoId)?.let {
                 withContext(Dispatchers.Main) {
                     title = "Alterar produto"
@@ -75,7 +75,7 @@ open class FormularioProdutoActivity : AppCompatActivity() {
         val botaoSalvar = binding.activityFormularioProdutoBotaoSalvar
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-            scope.launch {
+            lifecycleScope.launch {
                 produtoDao.salva(produtoNovo)
                 finish()
             }
