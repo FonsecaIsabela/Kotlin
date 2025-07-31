@@ -17,4 +17,10 @@
     <string name="valor_desc">Valor desc</string>
     <string name="valor_asc">Valor asc\n</string>
     <string name="sem_ordenacao">Sem ordenação</string>
+    <string name="orgs">Orgs</string>
+    <string name="entrar">Entrar</string>
+    <string name="cadastrar_usuario">Cadastrar usuário</string>
+    <string name="senha">Senha</string>
+    <string name="usuario">Usuário</string>
+    <string name="cadastrar">Cadastrar</string>
 </resources>

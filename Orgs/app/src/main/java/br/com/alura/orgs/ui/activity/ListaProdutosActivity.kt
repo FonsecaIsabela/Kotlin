@@ -6,11 +6,14 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
 // heranca
@@ -28,6 +31,10 @@ class ListaProdutosActivity : AppCompatActivity() {
         db.produtoDao()
     }
 
+    private val usuarioDao by lazy {
+        AppDatabase.instancia(this).usuarioDao()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -38,7 +45,18 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.atualiza(produtoDao.buscaTodos())
+        lifecycleScope.launch {
+            launch {
+                produtoDao.buscaTodos().collect { produtos ->
+                    adapter.atualiza(produtos)
+                }
+            }
+            intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioId ->
+                usuarioDao.buscaPorId(usuarioId).collect {
+                    Log.i("ListaProdutos", "onCreate: $it")
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -47,26 +65,34 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val produtosOrdenados: List<Produto>? = when (item.itemId) {
-            R.id.menu_ordenar_nome_asc ->
-                produtoDao.buscaTodosOrdenadorPorNomeAsc()
-            R.id.menu_ordenar_nome_desc ->
-                produtoDao.buscaTodosOrdenadorPorNomeDesc()
-            R.id.menu_ordenar_descricao_asc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
-            R.id.menu_ordenar_descricao_desc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
-            R.id.menu_ordenar_valor_asc ->
-                produtoDao.buscaTodosOrdenadosPorValorAsc()
-            R.id.menu_ordenar_valor_desc ->
-                produtoDao.buscaTodosOrdenadosPorValorDesc()
-            R.id.menu_sem_ordenar ->
-                produtoDao.buscaTodos()
+        lifecycleScope.launch {
+            val produtosOrdenados: List<Produto>? = when (item.itemId) {
+                R.id.menu_ordenar_nome_asc ->
+                    produtoDao.buscaTodosOrdenadorPorNomeAsc()
 
-            else -> null
-        }
-        produtosOrdenados?.let {
-            adapter.atualiza(it)
+                R.id.menu_ordenar_nome_desc ->
+                    produtoDao.buscaTodosOrdenadorPorNomeDesc()
+
+                R.id.menu_ordenar_descricao_asc ->
+                    produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
+
+                R.id.menu_ordenar_descricao_desc ->
+                    produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
+
+                R.id.menu_ordenar_valor_asc ->
+                    produtoDao.buscaTodosOrdenadosPorValorAsc()
+
+                R.id.menu_ordenar_valor_desc ->
+                    produtoDao.buscaTodosOrdenadosPorValorDesc()
+
+                R.id.menu_sem_ordenar ->
+                    produtoDao.buscaTodos().first()
+
+                else -> null
+            }
+            produtosOrdenados?.let {
+                adapter.atualiza(it)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
