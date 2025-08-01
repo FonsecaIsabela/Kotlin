@@ -25,4 +25,6 @@
     <string name="cadastrar">Cadastrar</string>
     <string name="item">Item</string>
     <string name="perfil">perfil\n</string>
+    <string name="sair_do_app">Sair do App</string>
+    <string name="perfil_do_usuario">Perfil do usuario</string>
 </resources>

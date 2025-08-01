@@ -47,6 +47,11 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
         }
     }
 
+    fun vaiParaPerfil(java: Class<PerfilUsuarioActivity>) {
+        vaiPara(PerfilUsuarioActivity::class.java)
+        finish()
+    }
+
     private fun vaiParaLogin() {
         vaiPara(LoginActivity::class.java) {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

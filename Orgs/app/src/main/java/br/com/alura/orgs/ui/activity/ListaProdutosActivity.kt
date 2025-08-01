@@ -5,17 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
-import br.com.alura.orgs.preferences.dataStore
-import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
@@ -65,18 +60,11 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_lista_produtos_sair_do_app -> {
-                lifecycleScope.launch {
-                    deslogaUsuario()
-                }
+            R.id.menu_perfil_usuario -> {
+                vaiParaPerfil(PerfilUsuarioActivity::class.java)
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun vaiParaLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
     }
 
     //    MENU_ORDENAR_PRODUTOS ----> NÃO ESTÁ SENDO USADO
