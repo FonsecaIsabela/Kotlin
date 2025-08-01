@@ -6,18 +6,21 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
+import br.com.alura.orgs.preferences.dataStore
+import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import br.com.alura.orgs.databinding.ActivityListaProdutosBinding
-import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
 // heranca
-class ListaProdutosActivity : AppCompatActivity() {
+class ListaProdutosActivity : UsuarioBaseActivity() {
 
     private val adapter = ListaProdutosAdapter(context = this)
     // Define o adaptador do RecyclerView, passando o contexto
@@ -31,71 +34,90 @@ class ListaProdutosActivity : AppCompatActivity() {
         db.produtoDao()
     }
 
-    private val usuarioDao by lazy {
-        AppDatabase.instancia(this).usuarioDao()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         title = "Lista de produtos"
         configuraRecyclerView()
         configuraFab()
-    }
-
-    override fun onResume() {
-        super.onResume()
         lifecycleScope.launch {
             launch {
-                produtoDao.buscaTodos().collect { produtos ->
-                    adapter.atualiza(produtos)
-                }
+                usuario
+                    .filterNotNull()
+                    .collect {
+                        Log.i("ListaProdutosActivity", "onCreate: $it")
+                        buscaProdutoUsuario()
+                    }
             }
-            intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioId ->
-                usuarioDao.buscaPorId(usuarioId).collect {
-                    Log.i("ListaProdutos", "onCreate: $it")
-                }
-            }
+        }
+    }
+
+    private suspend fun buscaProdutoUsuario() {
+        produtoDao.buscaTodos().collect { produtos ->
+            adapter.atualiza(produtos)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_ordenar_produtos, menu)
+        menuInflater.inflate(R.menu.menu_lista_produtos, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        lifecycleScope.launch {
-            val produtosOrdenados: List<Produto>? = when (item.itemId) {
-                R.id.menu_ordenar_nome_asc ->
-                    produtoDao.buscaTodosOrdenadorPorNomeAsc()
-
-                R.id.menu_ordenar_nome_desc ->
-                    produtoDao.buscaTodosOrdenadorPorNomeDesc()
-
-                R.id.menu_ordenar_descricao_asc ->
-                    produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
-
-                R.id.menu_ordenar_descricao_desc ->
-                    produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
-
-                R.id.menu_ordenar_valor_asc ->
-                    produtoDao.buscaTodosOrdenadosPorValorAsc()
-
-                R.id.menu_ordenar_valor_desc ->
-                    produtoDao.buscaTodosOrdenadosPorValorDesc()
-
-                R.id.menu_sem_ordenar ->
-                    produtoDao.buscaTodos().first()
-
-                else -> null
-            }
-            produtosOrdenados?.let {
-                adapter.atualiza(it)
+        when (item.itemId) {
+            R.id.menu_lista_produtos_sair_do_app -> {
+                lifecycleScope.launch {
+                    deslogaUsuario()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun vaiParaLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    //    MENU_ORDENAR_PRODUTOS ----> NÃO ESTÁ SENDO USADO
+
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.menu_ordenar_produtos, menu)
+//        return super.onCreateOptionsMenu(menu)
+//    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        lifecycleScope.launch {
+//            val produtosOrdenados: List<Produto>? = when (item.itemId) {
+//                R.id.menu_ordenar_nome_asc ->
+//                    produtoDao.buscaTodosOrdenadorPorNomeAsc()
+//
+//                R.id.menu_ordenar_nome_desc ->
+//                    produtoDao.buscaTodosOrdenadorPorNomeDesc()
+//
+//                R.id.menu_ordenar_descricao_asc ->
+//                    produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
+//
+//                R.id.menu_ordenar_descricao_desc ->
+//                    produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
+//
+//                R.id.menu_ordenar_valor_asc ->
+//                    produtoDao.buscaTodosOrdenadosPorValorAsc()
+//
+//                R.id.menu_ordenar_valor_desc ->
+//                    produtoDao.buscaTodosOrdenadosPorValorDesc()
+//
+//                R.id.menu_sem_ordenar ->
+//                    produtoDao.buscaTodos().first()
+//
+//                else -> null
+//            }
+//            produtosOrdenados?.let {
+//                adapter.atualiza(it)
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     private fun configuraFab() {
         val fab = binding.activityListaProdutosFloatingActionButton

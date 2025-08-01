@@ -23,4 +23,6 @@
     <string name="senha">Senha</string>
     <string name="usuario">Usuário</string>
     <string name="cadastrar">Cadastrar</string>
+    <string name="item">Item</string>
+    <string name="perfil">perfil\n</string>
 </resources>
