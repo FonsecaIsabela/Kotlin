@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_ordenar"
+        android:icon="@drawable/ic_action_ordenar"
+        android:title="@string/ordenar"
+        app:showAsAction="ifRoom">
+
+        <menu>
+            <item
+                android:id="@+id/menu_ordenar_nome_desc"
+                android:title="@string/nome_desc"/>
+
+            <item
+                android:id="@+id/menu_ordenar_nome_asc"
+                android:title="@string/nome_asc"/>
+
+            <item
+                android:id="@+id/menu_ordenar_descricao_desc"
+                android:title="@string/descricao_desc"/>
+
+            <item
+                android:id="@+id/menu_ordenar_descricao_asc"
+                android:title="@string/descricao_asc" />
+
+            <item
+                android:id="@+id/menu_ordenar_valor_desc"
+                android:title="@string/valor_desc"/>
+
+            <item
+                android:id="@+id/menu_ordenar_valor_asc"
+                android:title="@string/valor_asc"/>
+
+            <item
+                android:id="@+id/menu_sem_ordenar"
+                android:title="@string/sem_ordenacao"/>
+
+        </menu>
+    </item>
+</menu>

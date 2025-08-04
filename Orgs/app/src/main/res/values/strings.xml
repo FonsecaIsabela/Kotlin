@@ -7,4 +7,25 @@
     <string name="botao_flutuante_adicionar_produto">Botão flutuante adicionar produto</string>
     <string name="url_da_imagem">URL da imagem</string>
     <string name="carregar">Carregar</string>
+    <string name="editar">Editar</string>
+    <string name="remover">Remover</string>
+    <string name="nome_desc">Nome desc</string>
+    <string name="nome_asc">Nome asc</string>
+    <string name="descricao_desc">Descrição desc</string>
+    <string name="descricao_asc">Descrição asc</string>
+    <string name="ordenar">Ordenar</string>
+    <string name="valor_desc">Valor desc</string>
+    <string name="valor_asc">Valor asc\n</string>
+    <string name="sem_ordenacao">Sem ordenação</string>
+    <string name="orgs">Orgs</string>
+    <string name="entrar">Entrar</string>
+    <string name="cadastrar_usuario">Cadastrar usuário</string>
+    <string name="senha">Senha</string>
+    <string name="usuario">Usuário</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="item">Item</string>
+    <string name="perfil">perfil\n</string>
+    <string name="sair_do_app">Sair do App</string>
+    <string name="perfil_do_usuario">Perfil do usuario</string>
+    <string name="todos_os_produtos">Todos os produtos</string>
 </resources>
