@@ -15,15 +15,18 @@
         android:theme="@style/Theme.Orgs"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.TodosProdutosActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.PerfilUsuarioActivity"
             android:exported="false"
-            android:label="Perfil"/>
+            android:label="Perfil" />
         <activity
             android:name=".ui.activity.LoginActivity"
             android:theme="@style/Theme.Orgs.NoActionBar" />
         <activity
             android:name=".ui.activity.FormularioCadastroUsuarioActivity"
-            android:label="Cadastro de Usuário"/>
+            android:label="Cadastro de Usuário" />
         <activity android:name=".ui.activity.DetalhesProdutoActivity" />
         <activity android:name=".ui.activity.FormularioProdutoActivity" />
         <activity
